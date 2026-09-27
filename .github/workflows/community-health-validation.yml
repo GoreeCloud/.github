@@ -23,6 +23,50 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Validate workflow hardening
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          ruby <<'RUBY'
+          path = ".github/workflows/community-health-validation.yml"
+          text = File.read(path)
+          lines = text.lines
+
+          unless text.include?("permissions:\n  contents: read\n")
+            abort "::error file=#{path}::Workflow must keep top-level contents permission read-only."
+          end
+
+          if text.match?(/^\s*permissions:\s*write-all\s*$/) ||
+             text.match?(/^\s+[A-Za-z0-9_-]+:\s*write\s*$/)
+            abort "::error file=#{path}::Workflow must not request write permissions."
+          end
+
+          unless text.include?("persist-credentials: false")
+            abort "::error file=#{path}::Checkout credentials must not persist after checkout."
+          end
+
+          remote_actions = lines.filter_map do |line|
+            match = line.match(/^\s*uses:\s*([^\s#]+)(?:\s+#.*)?$/)
+            next unless match
+
+            action = match[1]
+            next if action.start_with?("./", "docker://")
+
+            action
+          end
+
+          if remote_actions.empty?
+            abort "::error file=#{path}::Expected at least one remotely sourced action."
+          end
+
+          remote_actions.each do |action|
+            unless action.match?(/@([0-9a-f]{40})\z/)
+              abort "::error file=#{path}::Remote action '#{action}' must be pinned to an immutable 40-character commit SHA."
+            end
+          end
+          RUBY
+
       - name: Validate required community-health files
         shell: bash
         run: |
