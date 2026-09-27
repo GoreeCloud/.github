@@ -1,0 +1,133 @@
+name: Validate community health
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  community-health:
+    name: community-health
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Check out exact revision
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+
+      - name: Validate required community-health files
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          required_files=(
+            "README.md"
+            "CONTRIBUTING.md"
+            "SECURITY.md"
+            "SUPPORT.md"
+            "CODE_OF_CONDUCT.md"
+            ".github/PULL_REQUEST_TEMPLATE.md"
+            ".github/ISSUE_TEMPLATE/bug-report.yml"
+            ".github/ISSUE_TEMPLATE/feature-request.yml"
+            ".github/ISSUE_TEMPLATE/config.yml"
+          )
+
+          for path in "${required_files[@]}"; do
+            if [[ ! -f "${path}" ]]; then
+              echo "::error file=${path}::Required community-health file is missing."
+              exit 1
+            fi
+
+            if [[ ! -s "${path}" ]]; then
+              echo "::error file=${path}::Required community-health file is empty."
+              exit 1
+            fi
+          done
+
+      - name: Validate issue-form YAML
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          ruby <<'RUBY'
+          require "yaml"
+
+          form_paths = [
+            ".github/ISSUE_TEMPLATE/bug-report.yml",
+            ".github/ISSUE_TEMPLATE/feature-request.yml"
+          ]
+
+          form_paths.each do |path|
+            begin
+              doc = YAML.safe_load(File.read(path), permitted_classes: [], permitted_symbols: [], aliases: false)
+            rescue Psych::Exception => error
+              abort "::error file=#{path}::Invalid YAML: #{error.message}"
+            end
+
+            unless doc.is_a?(Hash)
+              abort "::error file=#{path}::Issue form must contain a YAML mapping."
+            end
+
+            %w[name description body].each do |key|
+              value = doc[key]
+              if value.nil? || (value.respond_to?(:empty?) && value.empty?)
+                abort "::error file=#{path}::Required issue-form key '#{key}' is missing or empty."
+              end
+            end
+
+            unless doc["body"].is_a?(Array) && !doc["body"].empty?
+              abort "::error file=#{path}::Issue form body must be a non-empty list."
+            end
+          end
+
+          config_path = ".github/ISSUE_TEMPLATE/config.yml"
+
+          begin
+            config = YAML.safe_load(File.read(config_path), permitted_classes: [], permitted_symbols: [], aliases: false)
+          rescue Psych::Exception => error
+            abort "::error file=#{config_path}::Invalid YAML: #{error.message}"
+          end
+
+          unless config.is_a?(Hash)
+            abort "::error file=#{config_path}::Issue-template config must contain a YAML mapping."
+          end
+
+          links = config["contact_links"]
+          unless links.is_a?(Array) && !links.empty?
+            abort "::error file=#{config_path}::contact_links must be a non-empty list."
+          end
+
+          links.each_with_index do |entry, index|
+            unless entry.is_a?(Hash)
+              abort "::error file=#{config_path}::contact_links[#{index}] must be a mapping."
+            end
+
+            %w[name url about].each do |key|
+              value = entry[key]
+              if value.nil? || value.to_s.strip.empty?
+                abort "::error file=#{config_path}::contact_links[#{index}].#{key} is missing or empty."
+              end
+            end
+
+            unless entry["url"].to_s.start_with?("https://")
+              abort "::error file=#{config_path}::contact_links[#{index}].url must use HTTPS."
+            end
+          end
+          RUBY
+
+      - name: Validate security routing
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          grep -Fq "Do not" SECURITY.md
+          grep -Fq "Security" SUPPORT.md
+          grep -Fq "SECURITY.md" README.md
