@@ -1,0 +1,51 @@
+name: Feature request
+description: Propose a capability or improvement for a GoreeCloud repository
+title: "[Feature]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Describe the user need first. A clear problem statement helps evaluate the right implementation.
+  - type: textarea
+    id: need
+    attributes:
+      label: Problem or user need
+      description: What problem would this change solve, and who experiences it?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed capability
+      description: Describe the behavior or outcome you would like.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Describe existing workflows, workarounds, or other approaches you considered.
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope and affected areas
+      description: Which products, platforms, components, or workflows might be affected?
+  - type: textarea
+    id: considerations
+    attributes:
+      label: Security, privacy, accessibility, compatibility, or recovery considerations
+      description: Note any relevant constraints or risks. State "None identified" if none are known.
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Additional context
+      description: Add references, examples, mockups, related issues, or other useful context. Do not include secrets or private data.
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checks
+      options:
+        - label: I searched existing issues and did not find the same active request.
+          required: true
+        - label: I have not represented this proposal as already implemented, released, or accepted.
+          required: true

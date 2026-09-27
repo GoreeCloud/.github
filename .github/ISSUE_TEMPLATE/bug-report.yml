@@ -1,0 +1,66 @@
+name: Bug report
+description: Report a reproducible defect in a GoreeCloud repository
+title: "[Bug]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a defect. Do not use this form for security vulnerabilities or sensitive reports. Follow the repository security policy instead.
+  - type: input
+    id: component
+    attributes:
+      label: Component
+      description: Which component, screen, service, package, or subsystem is affected?
+      placeholder: "Example: Android launcher dock"
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version or revision
+      description: Provide the version, release, tag, branch, or commit when known.
+      placeholder: "Example: v1.2.0 or commit abc123"
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What happened?
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: What did you expect to happen?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Provide the smallest reliable reproduction you can.
+      placeholder: |
+        1. Open ...
+        2. Select ...
+        3. Observe ...
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Include relevant operating system, device, browser, runtime, architecture, or configuration information.
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Logs or additional evidence
+      description: Add sanitized logs, screenshots, traces, or other evidence. Remove credentials, tokens, private data, and sensitive infrastructure details.
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checks
+      options:
+        - label: I searched existing issues and did not find the same active report.
+          required: true
+        - label: This report does not contain credentials, private data, or a security vulnerability that should be reported privately.
+          required: true

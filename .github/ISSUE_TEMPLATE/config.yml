@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Security reports
+    url: https://github.com/GoreeCloud/.github/security/policy
+    about: Report vulnerabilities privately according to the GoreeCloud security policy.
+  - name: General GoreeCloud contact
+    url: https://www.goreecloud.com/contact/
+    about: Use the official GoreeCloud contact page for general or sensitive contact that does not belong in a public issue.
