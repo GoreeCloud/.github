@@ -38,6 +38,7 @@ jobs:
             ".github/ISSUE_TEMPLATE/bug-report.yml"
             ".github/ISSUE_TEMPLATE/feature-request.yml"
             ".github/ISSUE_TEMPLATE/config.yml"
+            ".github/dependabot.yml"
           )
 
           for path in "${required_files[@]}"; do
@@ -120,6 +121,37 @@ jobs:
             unless entry["url"].to_s.start_with?("https://")
               abort "::error file=#{config_path}::contact_links[#{index}].url must use HTTPS."
             end
+          end
+          dependabot_path = ".github/dependabot.yml"
+
+          begin
+            dependabot = YAML.safe_load(File.read(dependabot_path), permitted_classes: [], permitted_symbols: [], aliases: false)
+          rescue Psych::Exception => error
+            abort "::error file=#{dependabot_path}::Invalid YAML: #{error.message}"
+          end
+
+          unless dependabot.is_a?(Hash) && dependabot["version"] == 2
+            abort "::error file=#{dependabot_path}::Dependabot configuration must use version 2."
+          end
+
+          updates = dependabot["updates"]
+          unless updates.is_a?(Array) && !updates.empty?
+            abort "::error file=#{dependabot_path}::Dependabot updates must be a non-empty list."
+          end
+
+          actions = updates.find do |entry|
+            entry.is_a?(Hash) &&
+              entry["package-ecosystem"] == "github-actions" &&
+              entry["directory"] == "/"
+          end
+
+          unless actions
+            abort "::error file=#{dependabot_path}::A root GitHub Actions update rule is required."
+          end
+
+          schedule = actions["schedule"]
+          unless schedule.is_a?(Hash) && schedule["interval"] == "weekly"
+            abort "::error file=#{dependabot_path}::GitHub Actions dependency updates must run weekly."
           end
           RUBY
 
