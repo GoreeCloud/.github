@@ -11,7 +11,7 @@ body:
     attributes:
       label: Component
       description: Which component, screen, service, package, or subsystem is affected?
-      placeholder: Example: Android launcher dock
+      placeholder: "Example: Android launcher dock"
     validations:
       required: true
   - type: input
@@ -19,7 +19,7 @@ body:
     attributes:
       label: Version or revision
       description: Provide the version, release, tag, branch, or commit when known.
-      placeholder: Example: v1.2.0 or commit abc123
+      placeholder: "Example: v1.2.0 or commit abc123"
   - type: textarea
     id: problem
     attributes:
