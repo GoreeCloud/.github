@@ -27,7 +27,7 @@ Describe compatibility concerns, migrations, rollback/recovery considerations, o
 
 ## User interface and accessibility
 
-For UI changes, describe relevant Glaze UI/design-system, responsive, accessibility, keyboard, reduced-motion, contrast, and interaction-state validation. Otherwise state "Not applicable."
+For any GoreeCloud application, website, icon, operating system, or other designed user-facing/visual change, identify the applicable [GoreeCloud UI (GC UI)](https://github.com/GoreeCloud/gc-ui) references, semantic tokens/components/icons, platform adaptations, and verified responsive, accessibility, keyboard, reduced-motion, contrast, and interaction-state behavior. Glaze and Glaze UI are permanently banned as active design/development systems. Document any existing legacy dependencies as migration blockers rather than accepting them as compliant. For a headless change with no presentation impact, state "Not applicable."
 
 ## Status integrity
 
