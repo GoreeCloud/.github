@@ -13,6 +13,10 @@ GitHub repositories that do not provide a more specific local equivalent may use
 - `.github/PULL_REQUEST_TEMPLATE.md` — default pull-request structure.
 - `.github/ISSUE_TEMPLATE/` — default structured issue forms.
 
+## GoreeCloud-wide design-system requirement
+
+**Effective October 19, 2026:** Every GoreeCloud application, website, icon, operating system and other designed user-facing product must use [GoreeCloud UI (GC UI)](https://github.com/GoreeCloud/gc-ui) as its authoritative design foundation. **Glaze and Glaze UI are permanently banned as active design and development systems.** Legacy implementations require verified migration; policy effect does not prove rollout completion. See [GC UI succession and conformance](https://github.com/GoreeCloud/gc-ui/blob/main/docs/DESIGN_SYSTEM_SUCCESSION.md).
+
 ## Scope and authority
 
 This repository is a public GitHub configuration and community-health repository. It is not the canonical home for private GoreeCloud governance, credentials, operational records, production secrets, or project-specific implementation state.
