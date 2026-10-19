@@ -9,7 +9,7 @@ Thank you for helping improve GoreeCloud. This file provides default contributio
 3. Keep the change focused on one coherent purpose.
 4. Do not include credentials, secrets, private user data, internal-only infrastructure details, or other sensitive material.
 
-Repository-local instructions take precedence when they are more specific.
+Repository-local instructions may add more specific requirements, but must not override the GoreeCloud-wide GC UI mandate or reinstate prohibited Glaze/Glaze UI design dependencies.
 
 ## Branches
 
@@ -60,7 +60,9 @@ A passing build alone does not establish release, deployment, production, or lif
 
 ## User interface changes
 
-For repositories using Glaze UI or another governed GoreeCloud interface layer, preserve the repository's current design-system contract and applicable accessibility behavior. Validate relevant responsive states, keyboard or assistive-technology behavior, reduced motion, contrast, and interaction states where the change affects them.
+**Mandatory, effective October 19, 2026:** Every GoreeCloud-controlled application, website, icon, operating system, interface, and other designed asset or presentation layer **must be built and designed based on [GoreeCloud/gc-ui](https://github.com/GoreeCloud/gc-ui)**. Glaze and Glaze UI are **permanently banned as active GoreeCloud design and development systems**; do not introduce, extend, or maintain them as future design authorities or dependencies. Existing usage requires a planned, verified migration, not cosmetic renaming or copying. Maintain official brand-asset provenance in [GoreeCloud/branding-assets](https://github.com/GoreeCloud/branding-assets) where applicable.
+
+UI changes must document the applicable GC UI design tokens, components, icons, interaction patterns, and host-platform adaptations, and validate relevant responsive states, keyboard and assistive-technology behavior, reduced motion, contrast, and interaction states. Renamed imports alone do not establish conformance. Legacy migration and retirement status require evidence; see [GC UI succession and cutover policy](https://github.com/GoreeCloud/gc-ui/blob/main/docs/DESIGN_SYSTEM_SUCCESSION.md).
 
 ## Security and privacy
 
