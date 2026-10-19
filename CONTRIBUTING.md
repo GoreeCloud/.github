@@ -62,6 +62,8 @@ A passing build alone does not establish release, deployment, production, or lif
 
 **Mandatory, effective October 19, 2026:** Every GoreeCloud-controlled application, website, icon, operating system, interface, and other designed asset or presentation layer **must be built and designed based on [GoreeCloud/gc-ui](https://github.com/GoreeCloud/gc-ui)**. Glaze and Glaze UI are **permanently banned as active GoreeCloud design and development systems**; do not introduce, extend, or maintain them as future design authorities or dependencies. Existing usage requires a planned, verified migration, not cosmetic renaming or copying. Maintain official brand-asset provenance in [GoreeCloud/branding-assets](https://github.com/GoreeCloud/branding-assets) where applicable.
 
+As **Integral Platform System #5 of nine**, GC UI replaces Glaze and Glaze UI in GoreeCloud's shared experience layer. This classification does not assert that the full legacy-to-GC UI ecosystem migration is complete.
+
 UI changes must document the applicable GC UI design tokens, components, icons, interaction patterns, and host-platform adaptations, and validate relevant responsive states, keyboard and assistive-technology behavior, reduced motion, contrast, and interaction states. Renamed imports alone do not establish conformance. Legacy migration and retirement status require evidence; see [GC UI succession and cutover policy](https://github.com/GoreeCloud/gc-ui/blob/main/docs/DESIGN_SYSTEM_SUCCESSION.md).
 
 ## Security and privacy
