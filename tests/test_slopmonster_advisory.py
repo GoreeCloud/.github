@@ -248,15 +248,14 @@ class EditorialAdvisoryTests(unittest.TestCase):
     def test_workflow_contracts_are_advisory(self):
         base = Path(__file__).resolve().parents[1]
         shared = (base / ".github/workflows/slopmonster-advisory.yml").read_text()
-        caller = (base.parent / "caller/.github/workflows/slopmonster-advisory.yml").read_text()
         self.assertIn("continue-on-error: true", shared)
         self.assertIn("timeout-minutes: 10", shared)
         self.assertIn("permissions:\n  contents: read", shared)
         self.assertIn("if: ${{ always() && steps.score.outcome == 'skipped' }}", shared)
-        self.assertIn("uses: GoreeCloud/.github/.github/workflows/slopmonster-advisory.yml@main", caller)
-        self.assertIn("advisory_sha: main", caller)
+        self.assertIn("workflow_call:", shared)
+        self.assertIn("advisory_sha:", shared)
         self.assertIn("ref: ${{ inputs.advisory_sha || 'main' }}", shared)
-        self.assertNotIn("pull_request_target:", caller)
+        self.assertNotIn("pull_request_target:", shared)
 
     def test_report_filename_cannot_break_markdown_rows(self):
         report = advisory.format_summary([("docs/multi\nline|name.md", "Clear", "")], 0, True)
