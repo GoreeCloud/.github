@@ -1,0 +1,82 @@
+name: SlopMonster editorial advisory (shared)
+
+on:
+  workflow_call:
+    inputs:
+      advisory_sha:
+        description: Immutable commit SHA for GoreeCloud/.github scanner checkout
+        required: true
+        type: string
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  editorial-review:
+    name: Editorial review (non-blocking)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    continue-on-error: true
+    steps:
+      - name: Check out repository under review
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Check out upstream SlopMonster at a reviewed commit
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          repository: ItsssssJack/SlopMonster
+          ref: 3fc9787d9337b57c599a80afbefbbb3be5a8eb0b
+          path: .slopmonster-upstream
+          persist-credentials: false
+
+      - name: Check out GoreeCloud advisory scanner
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          repository: GoreeCloud/.github
+          ref: ${{ inputs.advisory_sha || 'main' }}
+          path: .goreecloud-advisory
+          persist-credentials: false
+
+      - name: Score public-facing writing and publish suggestions
+        id: score
+        shell: bash
+        continue-on-error: true
+        env:
+          SLOPMONSTER_BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before || '' }}
+          SLOPMONSTER_FULL_AUDIT: ${{ github.event_name == 'workflow_dispatch' }}
+        run: |
+          args=(
+            --repo "$GITHUB_WORKSPACE"
+            --checker "$GITHUB_WORKSPACE/.slopmonster-upstream/tools/deslop.py"
+            --base-sha "$SLOPMONSTER_BASE_SHA"
+            --summary-file "$GITHUB_STEP_SUMMARY"
+          )
+          if [[ "$SLOPMONSTER_FULL_AUDIT" == "true" ]]; then
+            args+=(--all)
+          fi
+          python3 .goreecloud-advisory/scripts/slopmonster_advisory.py "${args[@]}"
+
+      # The advisory job can be green even after a tolerated setup or scorer
+      # failure. This marker executes ONLY when the score step actually exited
+      # successfully (before continue-on-error adjusts its conclusion). The
+      # rollout guard verifies this step through GitHub's hosted jobs API.
+      - name: Confirm valid SlopMonster scan for pilot acceptance
+        if: ${{ always() && steps.score.outcome == 'success' }}
+        shell: bash
+        run: |
+          echo 'SlopMonster completed and produced an advisory report.'
+
+      - name: Explain skipped review if a prerequisite failed
+        if: ${{ always() && steps.score.outcome == 'skipped' }}
+        shell: bash
+        run: |
+          {
+            echo '## SlopMonster editorial advisory'
+            echo
+            echo 'Review unavailable: a required checkout or setup step did not complete.'
+            echo 'This is informational; no writing-quality conclusion was produced.'
+          } >> "$GITHUB_STEP_SUMMARY"
